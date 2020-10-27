@@ -1,0 +1,17 @@
+version: '3.8'
+
+#to run: docker-compose up -d
+
+services:
+  # Setup for MYSQL docker image
+  db:
+    image: mysql
+    container_name: mysql-customerapi-container
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    volumes:
+      - ./customerapi-mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"

@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id "org.flywaydb.flyway" version "7.1.0"
 }
 
 group 'br.com'
@@ -15,9 +16,15 @@ jar{
     }
 }
 
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-
-    implementation 'com.sparkjava:spark-core:2.9.3'
+flyway {
+    url = 'jdbc:mysql://127.0.0.1:3306/CUSTOMER_API'
+    user = 'root'
+    password = '123456'
 }
 
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    implementation 'com.sparkjava:spark-core:2.9.3'
+    implementation group: 'org.jdbi', name: 'jdbi', version: '2.78'
+    implementation 'mysql:mysql-connector-java:8.0.22'
+}
