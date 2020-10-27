@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'br.com'
+version '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+jar{
+    manifest {
+        attributes 'Main-Class': 'br.com.customerapi.CustomerAPI'
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+
+    implementation 'com.sparkjava:spark-core:2.9.3'
+}
+
