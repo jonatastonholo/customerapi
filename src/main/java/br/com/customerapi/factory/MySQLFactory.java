@@ -11,31 +11,35 @@ import org.slf4j.LoggerFactory;
  */
 public class MySQLFactory {
     final static Logger log = LoggerFactory.getLogger(MySQLFactory.class);
-    private static MySQLFactory thisObject;
-
     private static Jdbi jdbi;
+    private static MySQLFactory instance;
 
-    private final String USER_NAME = "root";
-    private final String PASSWORD = "123456";
-    private final String DATABASE_NAME = "CUSTOMER_API";
-    private final String SERVER_URL = "http://127.0.0.1";
+    private static final String USER_NAME = "root";
+    private static final String PASSWORD = "123456";
+    private static final String DATABASE_NAME = "CUSTOMER_API";
+    private static final String SERVER_URL = "127.0.0.1";
+    private static final String SERVER_PORT = "3306";
 
-
-    private MySQLFactory() throws ClassNotFoundException {
+    private MySQLFactory() {
         MysqlDataSource mysqlDS = new MysqlDataSource();
-        mysqlDS.setURL("jdbc:mysql://127.0.0.1:3306/CUSTOMER_API");
+        mysqlDS.setURL("jdbc:mysql://" + SERVER_URL + ":" + SERVER_PORT + "/" + DATABASE_NAME);
         mysqlDS.setUser(USER_NAME);
         mysqlDS.setPassword(PASSWORD);
-        this.jdbi = jdbi.create(mysqlDS);
+        jdbi = Jdbi.create(mysqlDS);
         jdbi.installPlugin(new SqlObjectPlugin());
-        thisObject = this;
     }
 
+    @SuppressWarnings("InstantiationOfUtilityClass") // FIXME
     public static void initialize() {
         try {
-            log.info("Initializing MySQL connection...");
-            new MySQLFactory();
-            log.info("OK");
+            if(instance == null) {
+                log.info("Initializing MySQL connection...");
+                instance = new MySQLFactory();
+                log.info("OK");
+            }
+            else {
+                log.info("MySQL connection is already initialized.");
+            }
         }
         catch (Exception e) {
             log.error("Error while trying connect to MySQL server\n" + e.getMessage());
@@ -43,18 +47,8 @@ public class MySQLFactory {
 
     }
 
-//    public static Long nextId() {
-//        return dbi.withHandle(new HandleCallback<Long>() {
-//            public Long withHandle(Handle handle) throws Exception {
-//                Map<String, Object> rs = handle.createQuery(
-//                        "SELECT idseq.nextval AS id FROM dual").first();
-//                return (Long) rs.get("id");
-//            }
-//        });
-//    }
-
     public static Jdbi jdbi() {
-        return thisObject.jdbi;
+        return jdbi;
     }
 
 }

@@ -16,7 +16,7 @@ import java.util.UUID;
  */
 public class Customer implements Serializable {
     @ColumnName(value = "customerId")
-    private int customerId;
+    private Long customerId;
     private final String uuid;
     private String cpf;
     private String name;
@@ -29,11 +29,11 @@ public class Customer implements Serializable {
 
     /***
      * A constructor for create new Customer
-     * @param cpf
-     * @param name
-     * @param email
-     * @param birthDate
-     * @param gender
+     * @param cpf the customer cpf number (only string numbers - size 11)
+     * @param name the customer name
+     * @param email the customer email
+     * @param birthDate the customer birthdate
+     * @param gender the customer gender
      */
     public Customer(String cpf, String name, String email, Timestamp birthDate, String gender) {
         this.cpf = cpf;
@@ -49,17 +49,17 @@ public class Customer implements Serializable {
 
     /***
      * Full constructor for get from database
-     * @param customerId
-     * @param cpf
-     * @param name
-     * @param email
-     * @param birthDate
-     * @param gender
-     * @param createdAt
-     * @param updatedAt
+     * @param customerId the customer id
+     * @param cpf the customer cpf number (only string numbers - size 11)
+     * @param name the customer name
+     * @param email the customer email
+     * @param birthDate the customer birthdate
+     * @param gender the customer gender
+     * @param createdAt the creation timestamp
+     * @param updatedAt the last update timestamp
      */
     @ConstructorProperties({"customerId", "uuid", "cpf", "name", "email", "birthDate", "gender", "createdAt", "updatedAt"})
-    public Customer(int customerId, String uuid, String cpf, String name, String email, Timestamp birthDate, String gender, Timestamp createdAt, Timestamp updatedAt) {
+    public Customer(Long customerId, String uuid, String cpf, String name, String email, Timestamp birthDate, String gender, Timestamp createdAt, Timestamp updatedAt) {
         this.customerId = customerId;
         this.uuid = uuid;
         this.cpf = cpf;
@@ -72,11 +72,11 @@ public class Customer implements Serializable {
         this.addresses = new ArrayList<>();
     }
 
-    public int getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
 

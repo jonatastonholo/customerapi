@@ -3,6 +3,7 @@ package br.com.customerapi.util;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -13,16 +14,16 @@ public abstract class ClockUtils {
 
     /***
      * Return the SQL Timestamp with the current time
-     * @return
+     * @return the timestamp of current time
      */
     public static Timestamp getTimestampNow() {
         return new Timestamp(new Date().getTime());
     }
 
     /***
-     * Convert a string date in formate yyyy-MM-dd in a SQL Timestamp
-     * @param date
-     * @return
+     * Convert a string date in format yyyy-MM-dd in a SQL Timestamp
+     * @param date a string with date in format yyyy-MM-dd
+     * @return the converted date to timestamp
      */
     public static Timestamp getTimestampFromStringDate(String date) {
         Timestamp timestamp;
@@ -33,5 +34,10 @@ public abstract class ClockUtils {
             timestamp = getTimestampNow();
         }
         return timestamp;
+    }
+
+    public static int getAge(Timestamp bornDate) {
+        Timestamp now = getTimestampNow();
+        return getTimestampNow().getYear() - bornDate.getYear();
     }
 }

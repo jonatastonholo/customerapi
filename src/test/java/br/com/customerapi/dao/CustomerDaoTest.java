@@ -18,13 +18,13 @@ class CustomerDaoTest {
                 "Teste Hoo",
                 "hoo@gmail.com",
                 ClockUtils.getTimestampFromStringDate("1989-02-22"),
-                "binario cis tetudo"
+                "algum genero qualquer"
         );
 
         MySQLFactory.initialize();
         CustomerDao dao = new CustomerDao();
-        Integer rowsModifiedid = dao.createCustomer(customer);
-        assert rowsModifiedid != null;
+        Integer rowsModified = dao.createCustomer(customer);
+        assert rowsModified != null;
     }
 
     @Test
@@ -32,7 +32,7 @@ class CustomerDaoTest {
         MySQLFactory.initialize();
         CustomerDao dao = new CustomerDao();
         List<Customer> customers = dao.listCustomers();
-        assertTrue(customers != null || customers == null);
+        assertNotNull(customers);
     }
 
     @Test
@@ -40,7 +40,7 @@ class CustomerDaoTest {
         MySQLFactory.initialize();
         CustomerDao dao = new CustomerDao();
         Customer customer = dao.getCustomer(4L);
-        assertTrue(customer != null || customer == null);
+        assertNotNull(customer);
     }
 
     @Test
@@ -63,5 +63,13 @@ class CustomerDaoTest {
         CustomerDao dao = new CustomerDao();
         Integer rowsModified = dao.deleteCustomer(4L);
         assert rowsModified != null;
+    }
+
+    @Test
+    void getCustomerByCPF() {
+        MySQLFactory.initialize();
+        CustomerDao dao = new CustomerDao();
+        Customer customer = dao.getCustomerByCPF("98521566658");
+        assertNotNull(customer);
     }
 }
