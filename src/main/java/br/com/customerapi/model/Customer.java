@@ -1,29 +1,82 @@
 package br.com.customerapi.model;
 
-import java.util.Date;
+import br.com.customerapi.util.ClockUtils;
+import org.jdbi.v3.core.mapper.reflect.ColumnName;
+import java.beans.ConstructorProperties;
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * The Customer Entity
  *
  * @author Jônatas Ribeiro Tonholo
  */
-public class Customer {
-    private Integer customerId;
+public class Customer implements Serializable {
+    @ColumnName(value = "customerId")
+    private int customerId;
+    private final String uuid;
     private String cpf;
     private String name;
     private String email;
-    private Date birthDate;
+    private Timestamp birthDate;
     private String gender;
-    private Date createdAt;
-    private Date updatedAt;
-    private List<Address> addresses;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
+    private final List<Address> addresses;
 
-    public Integer getCustomerId() {
+    /***
+     * A constructor for create new Customer
+     * @param cpf
+     * @param name
+     * @param email
+     * @param birthDate
+     * @param gender
+     */
+    public Customer(String cpf, String name, String email, Timestamp birthDate, String gender) {
+        this.cpf = cpf;
+        this.uuid = UUID.randomUUID().toString();
+        this.name = name;
+        this.email = email;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.createdAt = ClockUtils.getTimestampNow();
+        this.updatedAt = this.createdAt;
+        this.addresses = new ArrayList<>();
+    }
+
+    /***
+     * Full constructor for get from database
+     * @param customerId
+     * @param cpf
+     * @param name
+     * @param email
+     * @param birthDate
+     * @param gender
+     * @param createdAt
+     * @param updatedAt
+     */
+    @ConstructorProperties({"customerId", "uuid", "cpf", "name", "email", "birthDate", "gender", "createdAt", "updatedAt"})
+    public Customer(int customerId, String uuid, String cpf, String name, String email, Timestamp birthDate, String gender, Timestamp createdAt, Timestamp updatedAt) {
+        this.customerId = customerId;
+        this.uuid = uuid;
+        this.cpf = cpf;
+        this.name = name;
+        this.email = email;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.addresses = new ArrayList<>();
+    }
+
+    public int getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
 
@@ -51,11 +104,11 @@ public class Customer {
         this.email = email;
     }
 
-    public Date getBirthDate() {
+    public Timestamp getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(Timestamp birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -67,19 +120,19 @@ public class Customer {
         this.gender = gender;
     }
 
-    public Date getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -87,19 +140,7 @@ public class Customer {
         return addresses;
     }
 
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
-    }
-
-    public Customer(Integer customerId, String cpf, String name, String email, Date birthDate, String gender, Date createdAt, Date updatedAt, List<Address> addresses) {
-        this.customerId = customerId;
-        this.cpf = cpf;
-        this.name = name;
-        this.email = email;
-        this.birthDate = birthDate;
-        this.gender = gender;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.addresses = addresses;
+    public String getUuid() {
+        return uuid;
     }
 }

@@ -24,9 +24,15 @@ flyway {
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     implementation 'com.sparkjava:spark-core:2.9.3'
-    implementation group: 'org.jdbi', name: 'jdbi', version: '2.78'
+    implementation 'org.jdbi:jdbi3:3.0.0-beta2'
     implementation 'mysql:mysql-connector-java:8.0.22'
     implementation 'org.slf4j:slf4j-api:1.7.30'
     implementation 'org.slf4j:slf4j-log4j12:1.7.30'
+    implementation 'org.jdbi:jdbi3-sqlobject:3.17.0'
+}
+
+test {
+    useJUnitPlatform()
 }
