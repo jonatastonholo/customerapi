@@ -39,17 +39,15 @@ public class CustomerAPI {
      */
     public static void initialize() {
         try {
-            if(instance == null) {
+            if (instance == null) {
                 log.info("Initializing Customer API Service");
                 instance = new CustomerAPI();
                 log.info("Customer API Service initialization complete");
-            }
-            else {
+            } else {
                 log.warn("Customer API Service is already initialized. It's running!");
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Error on Customer API Service initializing");
             log.debug(e.getMessage());
         }
@@ -59,23 +57,31 @@ public class CustomerAPI {
      * Initialize the REST API
      */
     private void initializeAPI() {
-        /**
-         * Endpoint: Create Customer
-         * path: /customers
-         * type: post
-         *
-         * Response:
-         *  201: Success on customer creation
-         *  400: Invalid request parameters
-         *  500: Server internal error
-         */
+        createCustomerEndpoint();
+        listCustomersEndpoint();
+        getCustomerByIdEndpoint();
+        updateCustomerEndpoint();
+        deleteCustomerEndpoint();
+    }
+
+    /**
+     * Endpoint: Create Customer
+     * path: /customers
+     * type: post
+     * <p>
+     * Response:
+     * 201: Success on customer creation
+     * 400: Invalid request parameters
+     * 500: Server internal error
+     */
+    private void createCustomerEndpoint() {
         post("/customers", (req, res) -> {
             res.type("application/json");
             try {
                 log.info("POST:/customers");
                 Customer customer;
                 Address address;
-                try{
+                try {
                     String body = req.body();
                     // Create the customer
                     customer = customerService.createCustomer(body);
@@ -83,68 +89,68 @@ public class CustomerAPI {
                     customer.getAddresses().add(address);
                     res.status(201);
                     return JsonUtils.toJson(customer);
-                }
-                catch (JsonProcessingException e) {
+                } catch (JsonProcessingException e) {
                     log.error("POST:/customers > Error while parsing JSON");
                     log.debug(e.getMessage());
                     res.status(500);
                     return "ERROR 500 - Server internal error";
-                }
-                catch (APIError e) {
+                } catch (APIError e) {
                     res.status(400);
                     return e.getMessage();
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 res.status(500);
                 log.error("Error on POST:/customers");
                 log.debug(e.getMessage());
                 return "ERROR 500 - Server internal error";
             }
         });
+    }
 
-        /**
-         * Endpoint: List all customers
-         * path: /customers
-         * type: get
-         *
-         * Response:
-         *  200: Success on list customers
-         *  204: No content - no customers saved on database
-         *  500: Server internal error
-         */
+    /**
+     * Endpoint: List all customers
+     * path: /customers
+     * type: get
+     * <p>
+     * Response:
+     * 200: Success on list customers
+     * 204: No content - no customers saved on database
+     * 500: Server internal error
+     */
+    private void listCustomersEndpoint() {
         get("/customers", (req, res) -> {
             res.type("application/json");
             try {
                 log.info("GET:/customers");
                 Map<String, String[]> params = req.queryMap().toMap();
-                log.info("params: " + params.toString());
+                log.info("params keys: " + params.keySet().toString());
                 List<Customer> customers = customerService.listCustomers(params);
-                if(customers.isEmpty()) {
+                if (customers.isEmpty()) {
                     res.status(204);
-                    return "HTTP 204 - No content";
+                    return "No customers found";
                 }
 
                 return JsonUtils.toJson(customers);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 res.status(500);
                 log.error("Error on GET:/customers");
                 log.debug(e.getMessage());
                 return "ERROR 500 - Server internal error";
             }
         });
+    }
 
-        /**
-         * Endpoint: Get customer by ID
-         * path: /customers/{id}
-         * type: get
-         *
-         * Response:
-         *  200: Success on list customers
-         *  404: Not found - no customers saved on database with the received ID
-         *  500: Server internal error
-         */
+    /**
+     * Endpoint: Get customer by ID
+     * path: /customers/{id}
+     * type: get
+     * <p>
+     * Response:
+     * 200: Success on list customers
+     * 404: Not found - no customers saved on database with the received ID
+     * 500: Server internal error
+     */
+    private void getCustomerByIdEndpoint() {
         get("/customers/:id", (req, res) -> {
             String param = req.params("id");
             res.type("application/json");
@@ -152,85 +158,85 @@ public class CustomerAPI {
                 Long id = Long.parseLong(param);
                 log.info("GET:/customers/" + id);
                 Customer customer = customerService.getCustomer(id);
-                if(customer == null) {
+                if (customer == null) {
                     res.status(204);
-                    return "HTTP 204 - No content";
+                    return "No customer with id " + id + " found";
                 }
 
                 return JsonUtils.toJson(customer);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 res.status(500);
-                log.error("Error on GET:/customers/"+param);
+                log.error("Error on GET:/customers/" + param);
                 log.debug(e.getMessage());
                 return "ERROR 500 - Server internal error";
             }
         });
+    }
 
-        /**
-         * Endpoint: Update customer
-         * path: /customers/{id}
-         * type: put
-         *
-         * Response:
-         *  200: Success on update
-         *  404: Not found - no customers saved on database with the received ID
-         *  500: Server internal error
-         */
+    /**
+     * Endpoint: Update customer
+     * path: /customers/{id}
+     * type: put
+     * <p>
+     * Response:
+     * 200: Success on update
+     * 404: Not found - no customers saved on database with the received ID
+     * 500: Server internal error
+     */
+    private void updateCustomerEndpoint() {
         put("/customers/:id", (req, res) -> {
             try {
                 log.info("PUT:/customers/{id}");
                 res.type("application/json");
-                try{
+                try {
                     String param = req.params("id");
                     Long id = Long.parseLong(param);
                     log.info("Search customer id " + id);
                     Customer customer = customerService.getCustomer(id);
-                    if(customer == null) {
+                    if (customer == null) {
                         res.status(404);
-                        return "HTTP 404 - Customer id not found";
+                        return "Customer id " + id + " not found";
                     }
                     String body = req.body();
                     // Update the customer
                     customer = customerService.updateCustomer(body, customer);
 
                     // Update the customer addresses
-                    if(body.contains("address")) addressService.updateAddress(body, customer.getCustomerId());
+                    if (body.contains("address")) addressService.updateAddress(body, customer.getCustomerId());
                     // Get the customer addresses list
                     final List<Address> addresses = addressService.listCustomerAddresses(customer.getCustomerId());
                     customer.getAddresses().addAll(addresses);
                     res.status(201);
                     return JsonUtils.toJson(customer);
-                }
-                catch (JsonProcessingException e) {
+                } catch (JsonProcessingException e) {
                     log.error("POST:/customers > Error while parsing JSON");
                     log.debug(e.getMessage());
                     res.status(500);
                     return "ERROR 500 - Server internal error";
-                }
-                catch (APIError e) {
+                } catch (APIError e) {
                     res.status(400);
                     return e.getMessage();
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 res.status(500);
                 log.error("Error on PUT:/customers");
                 log.debug(e.getMessage());
                 return "ERROR 500 - Server internal error";
             }
         });
+    }
 
-        /**
-         * Endpoint: Delete customer
-         * path: /customers/{id}
-         * type: delete
-         *
-         * Response:
-         *  200: Success on update
-         *  404: Not found - no customers saved on database with the received ID
-         *  500: Server internal error
-         */
+    /**
+     * Endpoint: Delete customer
+     * path: /customers/{id}
+     * type: delete
+     * <p>
+     * Response:
+     * 200: Success on update
+     * 404: Not found - no customers saved on database with the received ID
+     * 500: Server internal error
+     */
+    private void deleteCustomerEndpoint() {
         delete("/customers/:id", (req, res) -> {
             log.info("DELETE:/customers/{id}");
             res.type("application/json");
@@ -239,22 +245,21 @@ public class CustomerAPI {
             try {
                 log.info("Find the customer id " + id);
                 Customer customer = customerService.getCustomer(id);
-                if(customer == null) {
+                if (customer == null) {
                     res.status(404);
-                    return "HTTP 404 - Customer id " + id + " not found";
+                    return "Customer id " + id + " not found";
                 }
 
                 log.info("Delete customer id " + id);
-                if(customerService.deleteCustomer(id) > 0) {
+                if (customerService.deleteCustomer(id) > 0) {
                     res.status(204);
                     log.info("Customer id " + id + " deleted.");
                     return "Customer successfully deleted";
                 }
                 return JsonUtils.toJson(customer);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 res.status(500);
-                log.error("Error on GET:/customers/"+param);
+                log.error("Error on GET:/customers/" + param);
                 log.debug(e.getMessage());
                 return "ERROR 500 - Server internal error";
             }
