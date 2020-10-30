@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jônatas Ribeiro Tonholo
@@ -107,6 +108,53 @@ public class CustomerDao {
         }
         catch (Exception e) {
             log.error("Error on trying list all customers");
+            log.debug(e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * List all customers saved on database
+     * @return a list with all customers saved on database
+     */
+    public List<Customer> listCustomers(Map<String, String[]> filters) {
+        try {
+            if(filters.size() <= 0) return listCustomers();
+            log.info("List all customers with filters");
+            final List<String> filterList = new ArrayList<>();
+
+            if(filters.containsKey("name")) {
+                filterList.add("name like '%" + filters.get("name")[0].toUpperCase() + "%'");
+            }
+            if(filters.containsKey("birthDate")) {
+                filterList.add("birthDate = '" + filters.get("birthDate")[0] + "'");
+            }
+            if(filters.containsKey("state")) {
+                filterList.add("state like '%" + filters.get("state")[0].toUpperCase() + "%'");
+            }
+            if(filters.containsKey("city")) {
+                filterList.add("city like '%" + filters.get("city")[0].toUpperCase() + "%'");
+            }
+
+            final StringBuilder s = new StringBuilder();
+            for(int i = 0; i < filterList.size(); i++) {
+                s.append(filterList.get(i));
+                s.append(i < filterList.size() - 1 ? " AND " : " ");
+            }
+
+            String FILTER = " WHERE " + s.toString();
+
+            if(filters.containsKey("sortBy")) {
+                FILTER += " ORDER BY " + filters.get("sortBy")[0];
+                if(filters.containsKey("sortOrder")) {
+                    FILTER += " " + filters.get("sortOrder")[0];
+                }
+            }
+
+            return selectJoin(FILTER);
+        }
+        catch (Exception e) {
+            log.error("Error on trying list customers with filters");
             log.debug(e.getMessage());
             return new ArrayList<>();
         }

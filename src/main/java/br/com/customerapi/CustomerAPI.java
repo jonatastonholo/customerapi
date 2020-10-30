@@ -1,6 +1,5 @@
 package br.com.customerapi;
-import br.com.customerapi.service.AddressAPIService;
-import br.com.customerapi.service.CustomerAPIService;
+import br.com.customerapi.api.AddressAPI;
 
 /**
  * The Customer Rest API main
@@ -11,7 +10,7 @@ public class CustomerAPI {
 
     public static void main(String[] args) {
         // Initialize the API REST
-        CustomerAPIService.initialize();
-        AddressAPIService.initialize();
+        br.com.customerapi.api.CustomerAPI.initialize();
+        AddressAPI.initialize();
     }
 }

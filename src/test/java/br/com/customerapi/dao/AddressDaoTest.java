@@ -31,8 +31,8 @@ class AddressDaoTest {
             true
         );
 
-        Integer rowsModified = dao.createAddress(address);
-        assert rowsModified != null;
+        Long id = dao.createAddress(address);
+        assertNotNull(id);
     }
 
     @Test

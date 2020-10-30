@@ -24,9 +24,9 @@ public class AddressDao {
     /***
      * Create new address
      * @param address a address to save on database
-     * @return the number of affected rows
+     * @return the id of created address
      */
-    public Integer createAddress(Address address) {
+    public Long createAddress(Address address) {
         try{
             log.info("Create Address id:" + address.getAddressId() + "(customerId: " + address.getCustomerId() + ")");
             String QUERY = "INSERT INTO ADDRESS(" +
@@ -62,7 +62,7 @@ public class AddressDao {
                         .bind("number",address.getNumber())
                         .bind("additionalInformation",address.getAdditionalInformation())
                         .bind("main",address.isMain())
-                        .execute()
+                        .executeAndReturnGeneratedKeys().mapTo(long.class).list().get(0)
             );
         }
         catch (Exception e) {
@@ -191,10 +191,14 @@ public class AddressDao {
         }
     }
 
-    public Address getCustomerMainAddress(Long customerId, Long addressId) {
+    /**
+     * Get the customer main address
+     * @param customerId the customer ID
+     * @return the main address
+     */
+    public Address getCustomerMainAddress(Long customerId) {
         String QUERY = "SELECT * FROM ADDRESS " +
-                "WHERE  addressId = " + addressId +
-                " AND addr_customerId = " + customerId +
+                "WHERE  addr_customerId = " + customerId +
                 " AND main is true";
 
         Jdbi jdbi = mySQLFactory.jdbi();

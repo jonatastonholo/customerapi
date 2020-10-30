@@ -3,7 +3,8 @@ package br.com.customerapi.util;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * A util class with Date and Time manipulations
@@ -16,7 +17,7 @@ public abstract class ClockUtils {
      * @return the timestamp of current time
      */
     public static Timestamp getTimestampNow() {
-        return new Timestamp(new Date().getTime());
+        return Timestamp.valueOf(LocalDateTime.now());
     }
 
     /***
@@ -36,7 +37,6 @@ public abstract class ClockUtils {
     }
 
     public static int getAge(Timestamp bornDate) {
-        Timestamp now = getTimestampNow();
-        return getTimestampNow().getYear() - bornDate.getYear();
+        return LocalDate.now().getYear() - bornDate.toLocalDateTime().getYear();
     }
 }

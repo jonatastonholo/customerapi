@@ -1,17 +1,26 @@
 package br.com.customerapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
 import java.beans.ConstructorProperties;
+import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * The Address Entity
  *
  * @author Jônatas Ribeiro Tonholo
  */
-public class Address {
+public class Address implements Serializable {
+    static final long serialVersionUID = -2168918342115692994L;
+
+    @JsonProperty(value = "id")
     private Long addressId;
+
     @ColumnName(value = "addr_customerId")
+    @JsonIgnore
     private Long customerId;
     private String state;
     private String city;
@@ -151,5 +160,34 @@ public class Address {
 
     public void setAdditionalInformation(String additionalInformation) {
         this.additionalInformation = additionalInformation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return main == address.main &&
+                addressId.equals(address.addressId) &&
+                isEqualsIgnoringID(o);
+    }
+
+    public boolean isEqualsIgnoringID(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return customerId.equals(address.customerId) &&
+               state.equals(address.state) &&
+               city.equals(address.city) &&
+               neighborhood.equals(address.neighborhood) &&
+               zipCode.equals(address.zipCode) &&
+               street.equals(address.street) &&
+               number.equals(address.number) &&
+               additionalInformation.equals(address.additionalInformation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(addressId, customerId, state, city, neighborhood, zipCode, street, number, additionalInformation, main);
     }
 }

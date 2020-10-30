@@ -1,6 +1,7 @@
 package br.com.customerapi.model;
 
 /**
+ * TODO: For future validations
  * @author Jônatas Ribeiro Tonholo
  */
 public enum Gender {
