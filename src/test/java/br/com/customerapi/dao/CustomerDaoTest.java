@@ -1,7 +1,10 @@
 package br.com.customerapi.dao;
-import br.com.customerapi.factory.MySQLFactory;
 import br.com.customerapi.model.Customer;
+import br.com.customerapi.model.Gender;
+import br.com.customerapi.module.AppModule;
 import br.com.customerapi.util.ClockUtils;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -11,6 +14,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Disabled
 class CustomerDaoTest {
 
+    Injector injector = Guice.createInjector(new AppModule());
+    CustomerDao dao = injector.getInstance(CustomerDao.class);
+
     @Test
     void createCustomer() {
         Customer customer = new Customer(
@@ -18,35 +24,27 @@ class CustomerDaoTest {
                 "Teste Hoo",
                 "hoo@gmail.com",
                 ClockUtils.getTimestampFromStringDate("1989-02-22"),
-                "algum genero qualquer"
+                Gender.MALE.toString()
         );
 
-        MySQLFactory.initialize();
-        CustomerDao dao = new CustomerDao();
         Integer rowsModified = dao.createCustomer(customer);
         assert rowsModified != null;
     }
 
     @Test
     void listCustomers() {
-        MySQLFactory.initialize();
-        CustomerDao dao = new CustomerDao();
         List<Customer> customers = dao.listCustomers();
         assertNotNull(customers);
     }
 
     @Test
     void getCustomer() {
-        MySQLFactory.initialize();
-        CustomerDao dao = new CustomerDao();
         Customer customer = dao.getCustomer(4L);
         assertNotNull(customer);
     }
 
     @Test
     void updateCustomer() {
-        MySQLFactory.initialize();
-        CustomerDao dao = new CustomerDao();
         Customer customer = dao.getCustomer(4L);
 
         customer.setName("Juarez ho ho ho");
@@ -59,16 +57,12 @@ class CustomerDaoTest {
 
     @Test
     void deleteCustomer() {
-        MySQLFactory.initialize();
-        CustomerDao dao = new CustomerDao();
         Integer rowsModified = dao.deleteCustomer(4L);
         assert rowsModified != null;
     }
 
     @Test
     void getCustomerByCPF() {
-        MySQLFactory.initialize();
-        CustomerDao dao = new CustomerDao();
         Customer customer = dao.getCustomerByCPF("98521566658");
         assertNotNull(customer);
     }

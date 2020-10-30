@@ -1,12 +1,8 @@
 package br.com.customerapi.service;
 
 import br.com.customerapi.CustomerAPI;
-import br.com.customerapi.dao.CustomerDao;
-import br.com.customerapi.model.Customer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 import static spark.Spark.*;
 
@@ -75,10 +71,11 @@ public class CustomerAPIService {
             res.type("application/json");
             log.info("Test get method");
 
-            CustomerDao dao = new CustomerDao();
-            List<Customer> customerNames = dao.listCustomers();
-            log.info(customerNames.get(0).getName());
-            return customerNames.toString();
+//            CustomerDao dao = new CustomerDao();
+//            List<Customer> customerNames = dao.listCustomers();
+//            log.info(customerNames.get(0).getName());
+//            return customerNames.toString();
+            return "";
         });
 
         /**

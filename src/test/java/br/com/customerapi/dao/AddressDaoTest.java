@@ -1,9 +1,9 @@
 package br.com.customerapi.dao;
 
-import br.com.customerapi.factory.MySQLFactory;
 import br.com.customerapi.model.Address;
-import br.com.customerapi.model.Customer;
-import br.com.customerapi.util.ClockUtils;
+import br.com.customerapi.module.AppModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -14,11 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Disabled
 class AddressDaoTest {
 
+    Injector injector = Guice.createInjector(new AppModule());
+    AddressDao dao = injector.getInstance(AddressDao.class);
+
     @Test
     void createAddress() {
-        MySQLFactory.initialize();
-        AddressDao dao = new AddressDao();
-
         Address address = new Address(
             1L,
             "TO",
@@ -37,26 +37,19 @@ class AddressDaoTest {
 
     @Test
     void getCustomerAddresses() {
-        MySQLFactory.initialize();
-        AddressDao dao = new AddressDao();
         List<Address> addressList = dao.listCustomerAddresses(1L);
-        assertTrue(addressList != null || addressList == null);
+        assertNotNull(addressList);
     }
 
     @Test
     void getCustomerAddressByAddressId() {
-        MySQLFactory.initialize();
-        AddressDao dao = new AddressDao();
         Address address = dao.getCustomerAddressByAddressId(1L, 1L);
-        assertTrue(address != null);
+        assertNotNull(address);
     }
 
     @Test
     void updateAddress() {
-        MySQLFactory.initialize();
-        AddressDao dao = new AddressDao();
         Address address = dao.getCustomerAddressByAddressId(1L, 1L);
-
 
         address.setMain(false);
         address.setCity("Belo Horizonte");
@@ -69,16 +62,12 @@ class AddressDaoTest {
 
     @Test
     void deleteAddress() {
-        MySQLFactory.initialize();
-        AddressDao dao = new AddressDao();
         Integer rowsModified = dao.deleteAddress(1L, 5L);
         assert rowsModified != null;
     }
 
     @Test
     void updateAllCustomerAddressToNotMain() {
-        MySQLFactory.initialize();
-        AddressDao dao = new AddressDao();
         Integer rowsModified = dao.updateAllCustomerAddressToNotMain(1L);
         assert rowsModified != null;
     }

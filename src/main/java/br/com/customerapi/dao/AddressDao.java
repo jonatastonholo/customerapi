@@ -4,6 +4,7 @@ import br.com.customerapi.CustomerAPI;
 import br.com.customerapi.factory.MySQLFactory;
 import br.com.customerapi.model.Address;
 import br.com.customerapi.model.AddressMapper;
+import com.google.inject.Inject;
 import org.jdbi.v3.core.Jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,9 @@ import java.util.List;
  */
 public class AddressDao {
     final static Logger log = LoggerFactory.getLogger(CustomerAPI.class);
+
+    @Inject
+    MySQLFactory mySQLFactory;
 
     /***
      * Create new address
@@ -47,7 +51,7 @@ public class AddressDao {
                     ":additionalInformation, "  +
                     ":main "                    +
                     ")";
-            Jdbi jdbi = MySQLFactory.jdbi();
+            Jdbi jdbi = mySQLFactory.jdbi();
             return jdbi.withHandle(handle -> handle.createUpdate(QUERY)
                         .bind("addr_customerId",address.getCustomerId())
                         .bind("state",address.getState())
@@ -77,7 +81,7 @@ public class AddressDao {
         try {
             log.info("Get customer's addresses list (customerId: " +customerId+ ")");
 
-            Jdbi jdbi = MySQLFactory.jdbi();
+            Jdbi jdbi = mySQLFactory.jdbi();
             String QUERY = "SELECT * FROM ADDRESS WHERE addr_customerId = " + customerId ;
 
             return jdbi.withHandle(handle ->
@@ -103,7 +107,7 @@ public class AddressDao {
         try {
             log.info("Get customer's addresses by id (addressId: " + addressId + ") (customerId: " +customerId + ") ");
 
-            Jdbi jdbi = MySQLFactory.jdbi();
+            Jdbi jdbi = mySQLFactory.jdbi();
             String QUERY = "SELECT * FROM ADDRESS " +
                     "WHERE  addressId = " + addressId +
                     " AND addr_customerId = " + customerId;
@@ -129,7 +133,7 @@ public class AddressDao {
     public Integer updateAddress(Address address) {
         try {
             log.info("Update customer's addresses by id (addressId: " + address.getAddressId() + ") (customerId: " + address.getCustomerId() + ") ");
-            Jdbi jdbi = MySQLFactory.jdbi();
+            Jdbi jdbi = mySQLFactory.jdbi();
             String QUERY = "UPDATE ADDRESS " +
                     "SET " +
                     "state = :state, " +
@@ -173,7 +177,7 @@ public class AddressDao {
         try{
             log.info("Delete customer's addresses by id (addressId: " + customerId + ") (customerId: " + addressId + ") ");
             String QUERY = "DELETE FROM ADDRESS WHERE addressId = :addressId AND addr_customerId = :customerId ";
-            Jdbi jdbi = MySQLFactory.jdbi();
+            Jdbi jdbi = mySQLFactory.jdbi();
             return jdbi.withHandle(handle -> handle.createUpdate(QUERY)
                     .bind("addressId",addressId)
                     .bind("customerId",customerId)
@@ -193,7 +197,7 @@ public class AddressDao {
                 " AND addr_customerId = " + customerId +
                 " AND main is true";
 
-        Jdbi jdbi = MySQLFactory.jdbi();
+        Jdbi jdbi = mySQLFactory.jdbi();
         return jdbi.withHandle(handle ->
                 handle.createQuery(QUERY)
                         .map(new AddressMapper())
@@ -205,7 +209,7 @@ public class AddressDao {
         try {
             log.info("Updating all address of customer id " + customerId + " to not main");
             String QUERY = "UPDATE ADDRESS SET main = FALSE WHERE addr_customerId = :customerId";
-            Jdbi jdbi = MySQLFactory.jdbi();
+            Jdbi jdbi = mySQLFactory.jdbi();
             return jdbi.withHandle(handle -> handle.createUpdate(QUERY)
                     .bind("customerId",customerId)
                     .execute()

@@ -1,20 +1,27 @@
 package br.com.customerapi.dao;
 
 import br.com.customerapi.CustomerAPI;
-import br.com.customerapi.factory.MySQLFactory;
+import br.com.customerapi.factory.DatabaseFactory;
 import br.com.customerapi.model.Address;
 import br.com.customerapi.model.Customer;
+import com.google.inject.Inject;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.reflect.ConstructorMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @author Jônatas Ribeiro Tonholo
  */
 public class CustomerDao {
     final static Logger log = LoggerFactory.getLogger(CustomerAPI.class);
+
+    @Inject
+    DatabaseFactory databaseFactory;
 
     /***
      * Create new customer
@@ -44,7 +51,7 @@ public class CustomerDao {
                     ":createdAt, " +
                     ":updatedAt "  +
                     ")";
-            Jdbi jdbi = MySQLFactory.jdbi();
+            Jdbi jdbi = databaseFactory.jdbi();
             return jdbi.withHandle(handle -> handle.createUpdate(QUERY)
                         .bind("cpf",customer.getCpf())
                         .bind("uuid",customer.getUuid())
@@ -71,7 +78,7 @@ public class CustomerDao {
      */
     private List<Customer> selectJoin(String FILTER) {
         String QUERY = "SELECT * FROM CUSTOMER c LEFT JOIN ADDRESS a ON c.customerId = a.addr_customerId";
-        Jdbi jdbi = MySQLFactory.jdbi();
+        Jdbi jdbi = databaseFactory.jdbi();
         return jdbi.withHandle(handle ->
                 new ArrayList<>(handle.createQuery(QUERY + (FILTER == null ? "" : " " + FILTER))
                         .registerRowMapper(ConstructorMapper.factory(Customer.class))
@@ -145,7 +152,7 @@ public class CustomerDao {
                     "WHERE "                    +
                     "customerId = :customerId ";
 
-            Jdbi jdbi = MySQLFactory.jdbi();
+            Jdbi jdbi = databaseFactory.jdbi();
             return jdbi.withHandle(handle -> handle.createUpdate(QUERY)
                         .bind("customerId",customer.getCustomerId())
                         .bind("cpf",customer.getCpf())
@@ -175,7 +182,7 @@ public class CustomerDao {
         try{
             log.info("DELETE customer id: " + customerId + ")");
             String QUERY = "DELETE FROM CUSTOMER WHERE customerId = :customerId ";
-            Jdbi jdbi = MySQLFactory.jdbi();
+            Jdbi jdbi = databaseFactory.jdbi();
             return jdbi.withHandle(handle -> handle.createUpdate(QUERY)
                         .bind("customerId",customerId)
                         .execute()
