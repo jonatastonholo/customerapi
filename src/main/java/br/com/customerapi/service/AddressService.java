@@ -1,6 +1,6 @@
 package br.com.customerapi.service;
 
-import br.com.customerapi.CustomerAPI;
+import br.com.customerapi.CustomerAPIMain;
 import br.com.customerapi.dao.AddressDao;
 import br.com.customerapi.model.Address;
 import br.com.customerapi.model.EAPIError;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author Jônatas Ribeiro Tonholo
  */
 public class AddressService {
-    final static Logger log = LoggerFactory.getLogger(CustomerAPI.class);
+    final static Logger log = LoggerFactory.getLogger(CustomerAPIMain.class);
 
     Injector injector = Guice.createInjector(new AppModule());
     AddressDao addressDao = injector.getInstance(AddressDao.class);
@@ -51,11 +51,28 @@ public class AddressService {
             addressJson = json.substring(json.indexOf("\"address\""));
             addressJson = addressJson.substring(addressJson.indexOf(":")+1);
         }
+        else {
+            addressJson = json;
+        }
 
         if(addressJson.replaceAll("[^}]", "").length() > 1) {
             addressJson = addressJson.substring(0, addressJson.indexOf("}")+1);
         }
         return JsonUtils.fromJson(addressJson, Address.class);
+    }
+
+    /**
+     * Parse the received address and put the address id received from API
+     * @param json json with address
+     * @param addressId the received address id
+     * @return the address with the received id
+     * @throws JsonProcessingException
+     */
+    private Address parseAddress(String json, Long customerId, Long addressId) throws JsonProcessingException {
+        Address address = parseAddress(json);
+        address.setAddressId(addressId);
+        address.setCustomerId(customerId);
+        return address;
     }
 
     /**
@@ -116,6 +133,18 @@ public class AddressService {
         return saveAddress(parseAddress(json), customerId, true);
     }
 
+    /***
+     * Update the received address
+     * @param json the json of address
+     * @param customerId the customer id to update
+     * @return the updated address
+     * @throws JsonProcessingException
+     * @throws APIError
+     */
+    public Address updateAddress(String json, Long customerId, Long addressId) throws JsonProcessingException, APIError {
+        return saveAddress(parseAddress(json, customerId, addressId), customerId, true);
+    }
+
     /**
      * List all customer's addresses
      * @param customerId the customer ID
@@ -123,5 +152,25 @@ public class AddressService {
      */
     public List<Address> listCustomerAddresses(Long customerId) {
         return addressDao.listCustomerAddresses(customerId);
+    }
+
+    /**
+     * Get the customer id address by address id
+     * @param customerId the customer id
+     * @param addressId the address id
+     * @return the address or null
+     */
+    public Address getCustomerAddressByAddressId(Long customerId, Long addressId) {
+        return addressDao.getCustomerAddressByAddressId(customerId, addressId);
+    }
+
+    /**
+     * Delete the address from customer's addresses list
+     * @param customerId the customer id to remove the address
+     * @param addressId the address id to remove
+     * @return number of rows affected
+     */
+    public Integer deleteAddress(Long customerId, Long addressId) {
+        return addressDao.deleteAddress(customerId,addressId);
     }
 }

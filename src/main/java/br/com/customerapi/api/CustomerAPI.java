@@ -1,5 +1,6 @@
 package br.com.customerapi.api;
 
+import br.com.customerapi.CustomerAPIMain;
 import br.com.customerapi.model.Address;
 import br.com.customerapi.model.Customer;
 import br.com.customerapi.module.AppModule;
@@ -22,7 +23,7 @@ import static spark.Spark.*;
  * @author Jônatas Ribeiro Tonholo
  */
 public class CustomerAPI {
-    final static Logger log = LoggerFactory.getLogger(br.com.customerapi.CustomerAPI.class);
+    final static Logger log = LoggerFactory.getLogger(CustomerAPIMain.class);
 
     Injector injector = Guice.createInjector(new AppModule());
     CustomerService customerService = injector.getInstance(CustomerService.class);
@@ -159,7 +160,7 @@ public class CustomerAPI {
                 log.info("GET:/customers/" + id);
                 Customer customer = customerService.getCustomer(id);
                 if (customer == null) {
-                    res.status(204);
+                    res.status(404);
                     return "No customer with id " + id + " found";
                 }
 
@@ -232,7 +233,7 @@ public class CustomerAPI {
      * type: delete
      * <p>
      * Response:
-     * 200: Success on update
+     * 200: Success on delete
      * 404: Not found - no customers saved on database with the received ID
      * 500: Server internal error
      */
@@ -250,13 +251,19 @@ public class CustomerAPI {
                     return "Customer id " + id + " not found";
                 }
 
+                String msg = "";
                 log.info("Delete customer id " + id);
                 if (customerService.deleteCustomer(id) > 0) {
-                    res.status(204);
-                    log.info("Customer id " + id + " deleted.");
-                    return "Customer successfully deleted";
+                    res.status(200);
+                    msg = "Customer id " + id + " successfully deleted";
+                    log.info(msg);
+                    return msg;
+                } else {
+                    res.status(404);
+                    msg = "Cannot delete customer id " + id;
+                    log.warn(msg);
+                    return msg;
                 }
-                return JsonUtils.toJson(customer);
             } catch (Exception e) {
                 res.status(500);
                 log.error("Error on GET:/customers/" + param);

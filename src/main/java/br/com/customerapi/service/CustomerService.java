@@ -1,6 +1,6 @@
 package br.com.customerapi.service;
 
-import br.com.customerapi.CustomerAPI;
+import br.com.customerapi.CustomerAPIMain;
 import br.com.customerapi.dao.CustomerDao;
 import br.com.customerapi.model.Customer;
 import br.com.customerapi.model.EAPIError;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @author Jônatas Ribeiro Tonholo
  */
 public class CustomerService {
-    final static Logger log = LoggerFactory.getLogger(CustomerAPI.class);
+    final static Logger log = LoggerFactory.getLogger(CustomerAPIMain.class);
     Injector injector = Guice.createInjector(new AppModule());
     CustomerDao customerDao = injector.getInstance(CustomerDao.class);
 

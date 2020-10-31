@@ -1,6 +1,6 @@
 package br.com.customerapi.dao;
 
-import br.com.customerapi.CustomerAPI;
+import br.com.customerapi.CustomerAPIMain;
 import br.com.customerapi.factory.MySQLFactory;
 import br.com.customerapi.model.Address;
 import br.com.customerapi.model.AddressMapper;
@@ -16,7 +16,7 @@ import java.util.List;
  * @author Jônatas Ribeiro Tonholo
  */
 public class AddressDao {
-    final static Logger log = LoggerFactory.getLogger(CustomerAPI.class);
+    final static Logger log = LoggerFactory.getLogger(CustomerAPIMain.class);
 
     @Inject
     MySQLFactory mySQLFactory;
