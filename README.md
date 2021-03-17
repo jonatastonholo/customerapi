@@ -1,7 +1,7 @@
 # Customer REST API
 Version: 1.0.0
 
-This is a RESTFul API, developed using **Java**, **Spark** **Framework**, **Gradle**, **Jackson**, **Google Guice**, **JDBI**, **Flyway** and **Docker**.
+This is a REST API, developed using **Java**, **Spark** **Framework**, **Gradle**, **Jackson**, **Google Guice**, **JDBI**, **Flyway** and **Docker**.
 The database used is MySQL running on Docker.
 
 This API implements a CRUD for a customer with an address list.
